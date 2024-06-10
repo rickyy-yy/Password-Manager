@@ -3,17 +3,20 @@ import os
 import time
 
 
-def check_storage():
-    pc_user = os.getlogin()
-    users_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\users.txt"
-    passwords_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\passwords.txt"
+pc_user = os.getlogin()
+users_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\users.py"
+passwords_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\passwords.py"
 
+
+def check_storage():
     if not os.path.isfile(users_file):
         file = open(users_file, 'x')
+        file.write("users_dict = {}")
         file.close()
 
     if not os.path.isfile(passwords_file):
         file = open(passwords_file, 'x')
+        file.write("passwords_dict = {}")
         file.close()
 
 
@@ -26,17 +29,18 @@ def main_menu():
     print("1. Manage Passwords")
     print("2. Generate a Random Password")
     print("3. More Info")
+    print("4. Quit")
     print("")
 
     while not valid_input:
         try:
-            user_selection = int(input("Enter your choice (1/2/3): "))
+            user_selection = int(input("Enter your choice (1/2/3/4): "))
             print("")
 
-            while not (0 < user_selection < 4):
+            while not (0 < user_selection < 5):
                 print("")
                 print("You entered an invalid selection! Please try again.")
-                user_selection = int(input("Enter your choice (1/2/3): "))
+                user_selection = int(input("Enter your choice (1/2/3/4): "))
 
             valid_input = True
         except ValueError:
@@ -49,6 +53,8 @@ def main_menu():
             generate_password()
         case 3:
             info_page()
+        case 4:
+            exit()
 
 
 def login_or_signup():
@@ -130,8 +136,7 @@ def login_page():
         print("")
         password = str(input("Please enter your password: "))
 
-    login_success = check_user(username, password)
-    if login_success:
+    if check_user(username, password):
         show_passwords(username, password)
     else:
         print("")
@@ -184,8 +189,7 @@ def signup_page():
         print("")
         password = str(input("Please enter a password: "))
 
-    user_is_unique = unique_username(username)
-    if user_is_unique:
+    if unique_username(username):
         register_account(username, password)
     else:
         print("")
@@ -217,7 +221,8 @@ def signup_page():
 
 
 def check_user(username, password):
-    pass
+    registered_users = list(users_dict.keys())
+    registered_passwords = list(users_dict.values())
 
 
 def show_passwords(username, password):
@@ -232,6 +237,24 @@ def register_account(username, password):
     pass
 
 
+def decrypt(value, password):
+    key = password
+    fernet = Fernet(key)
+
+    plaintext = fernet.decrypt(value).decode()
+    return plaintext
+
+
+def encrypt(value, password):
+    key = password
+    fernet = Fernet(key)
+
+    ciphertext = fernet.encrypt(value.encode())
+    return ciphertext
+
+
 if __name__ == '__main__':
     check_storage()
+    from passwords import *
+    from users import *
     main_menu()

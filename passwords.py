@@ -1,1 +1,2 @@
-passwords_dict = {}
+user_index = {}
+password_db = {}

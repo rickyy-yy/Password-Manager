@@ -1,1 +1,1 @@
-users_dict = {}
+registered_users_dict = {"123456": "b'gAAAAABmZwPsMsfGOO6VlvrETY8tJJyO4iKoQXvwTQS0T1enzQULYZlWltYU6qMM6fYev5pkvTUhF-_y_jaCdmY7vKR9A2YmOw=='", "1234567": "b'gAAAAABmZwfXhx6LVaHOb20diza70h0Paj28cFAMmBN40PBDiFUFHGmB8LRW5GZOAxa9E0RyPVnsSZkdNQM1SrenRNd1tz9n0Q=='"}

@@ -6,17 +6,17 @@ import time
 import json
 import importlib.util
 
-pc_user = os.getlogin()
-users_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\users.py"
-passwords_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\passwords.json"
-key_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\key.key"
+pc_user = os.getlogin()  # Gets the local logged-in username
+users_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\users.py"  # The file used to store registered users
+passwords_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\passwords.json"  # The file used to store each user's passwords
+key_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\key.key"  # The file containing the encryption key, should be in a more secure directory though
 
 key: str
 logged_in_user: str
 logged_in_password: str
 
 
-def check_storage():
+def check_storage():  # Checks if the user, password and key files exist. If not, create them.
     if not os.path.isfile(users_file):
         with open(users_file, 'x') as file:
             file.write("registered_users_dict = {}")
@@ -30,8 +30,8 @@ def check_storage():
             generate_new_key()
 
 
-def is_password_unique(password):
-    data = get_password_json()
+def is_password_unique(password):  # Function called in later functions to check if a password exists/is unique.
+    data = get_password_json()  # Reads the JSON file
     encrypted_passwords = []
     decrypted_passwords = []
     if logged_in_user in data:
@@ -40,7 +40,7 @@ def is_password_unique(password):
             encrypted_passwords += list(item.values())
 
         for encrypted in encrypted_passwords:
-            decrypted_passwords.append((decrypt(encrypted)))
+            decrypted_passwords.append((decrypt(encrypted)))  # Each password is encrypted in the file, so they need to be decrypted before they are shown.
 
         if password in decrypted_passwords:
             return False
@@ -49,7 +49,7 @@ def is_password_unique(password):
         return True
 
 
-def is_note_unique(note):
+def is_note_unique(note):  # Checks if an identifier is unique/already exists.
     data = get_password_json()
     if logged_in_user in data:
         for item in data[logged_in_user]:
@@ -60,7 +60,7 @@ def is_note_unique(note):
         return True
 
 
-def check_username_exist(username):
+def check_username_exist(username):  # Checks if the username entered is registered.
     global registered_user_dict
     spec = importlib.util.spec_from_file_location("users", users_file)
     users_module = importlib.util.module_from_spec(spec)
@@ -73,14 +73,14 @@ def check_username_exist(username):
         return False
 
 
-def check_user_has_passwords():
+def check_user_has_passwords():  # Checks if the registered user has any passwords under their account
     data = get_password_json()
     if logged_in_user in data:
         return True
     return False
 
 
-def check_login_match(username, password):
+def check_login_match(username, password):  # Checks if password given is correct
     global key
     global registered_user_dict
     spec = importlib.util.spec_from_file_location("users", users_file)
@@ -100,31 +100,31 @@ def check_login_match(username, password):
         return False
 
 
-def generate_new_key():
+def generate_new_key():  # Writes new key
     with open(key_file, 'w') as file:
         key = Fernet.generate_key()
         file.write(key.decode())
 
 
-def get_key():
+def get_key():  # Used to load key into main program
     with open(key_file, 'r') as file:
         global key
         key = file.readline().rstrip('\n')
 
 
-def get_password_json():
+def get_password_json():  # Reads the JSON file.
     with open(passwords_file, 'r') as file:
         data = json.load(file)
 
     return data
 
 
-def write_password_json(json_data):
+def write_password_json(json_data):  # Updates the data of the JSON file
     with open(passwords_file, 'w') as file:
         file.write(json.dumps(json_data, indent=4))
 
 
-def register_user(username, password):
+def register_user(username, password):  # Adds user to the users file
     with open(users_file, 'r') as file:
         existing_users = file.readline().rstrip('\n')
         if len(str(existing_users)) > 26:
@@ -138,7 +138,7 @@ def register_user(username, password):
         file.write(existing_users)
 
 
-def signup():
+def signup():  # Sign Up
     username = ""
     password = ""
     valid = False
@@ -183,7 +183,7 @@ def signup():
         login()
 
 
-def login():
+def login():  # Log In Page
     username = ""
     password = ""
     valid = False

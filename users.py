@@ -1,1 +1,1 @@
-registered_users_dict = {"Ricky": "gAAAAABmajtCAFTHOXTMJrno-xXEZLZ0uJl10bB1LQE9Y4zP-H0Dazk5CGHQfq-z9ecYib9TLv04lS9i4UN0PSSyZGpEmq2OqA=="}
+registered_users_dict = {"Ricky": "gAAAAABmakPuk5691t2Oxmvu6kLSAPttlr3KDED5Lzlf6HQ218_DAnUTaASC9f1nYTnNdQEObNl5vh7bGNn1TGj__MXjxu20_w=="}

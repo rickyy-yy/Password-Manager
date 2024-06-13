@@ -9,7 +9,7 @@ import importlib.util
 pc_user = os.getlogin()
 users_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\users.py"
 passwords_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\passwords.json"
-key_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\key.txt"
+key_file = f"C:\\Users\\{pc_user}\\Documents\\Password Manager\\key.key"
 
 key: str
 logged_in_user: str

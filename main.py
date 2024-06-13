@@ -34,24 +34,30 @@ def is_password_unique(password):
     data = get_password_json()
     encrypted_passwords = []
     decrypted_passwords = []
-    for item in data[logged_in_user]:
-        encrypted_passwords += list(item.values())
+    if logged_in_user in data:
 
-    for encrypted in encrypted_passwords:
-        decrypted_passwords.append((decrypt(encrypted)))
+        for item in data[logged_in_user]:
+            encrypted_passwords += list(item.values())
 
-    if password in decrypted_passwords:
-        return False
-    return True
+        for encrypted in encrypted_passwords:
+            decrypted_passwords.append((decrypt(encrypted)))
+
+        if password in decrypted_passwords:
+            return False
+        return True
+    else:
+        return True
 
 
 def is_note_unique(note):
     data = get_password_json()
-    for item in data[logged_in_user]:
-        if note in item:
-            return False
-
-    return True
+    if logged_in_user in data:
+        for item in data[logged_in_user]:
+            if note in item:
+                return False
+        return True
+    else:
+        return True
 
 
 def check_username_exist(username):
@@ -86,7 +92,6 @@ def check_login_match(username, password):
     index = usernames.index(username)
 
     real_password = encrypted_passwords[index]
-    print(real_password)
     decrypted_password = decrypt(real_password)
 
     if password == decrypted_password:
@@ -137,6 +142,7 @@ def signup():
     username = ""
     password = ""
     valid = False
+    print("============")
     print("Sign Up Page")
     print("============")
     while not (10 > len(username) > 3):
@@ -181,6 +187,7 @@ def login():
     username = ""
     password = ""
     valid = False
+    print("===========")
     print("Log In Page")
     print("===========")
 
@@ -202,9 +209,26 @@ def login():
             main_menu()
         else:
             print("")
-            print("Incorrect password! Try again!")
-            time.sleep(2)
-            login()
+            print("Incorrect password! Would you like to: ")
+            print("")
+            print("1. Try Again")
+            print("2. Go Back")
+            print("")
+
+            while not valid:
+                try:
+                    choice = int(input("Enter your choice (1/2): "))
+                    while 0 > choice > 3:
+                        choice = int(input("Enter your choice (1/2): "))
+                    valid = True
+                except ValueError:
+                    pass
+
+            match choice:
+                case 1:
+                    login()
+                case 2:
+                    login_or_signup()
     else:
         print("")
         print("Username doesn't exist! Would you like to sign up instead?")
@@ -287,6 +311,7 @@ def main_menu():
             logged_in_user = ""
             logged_in_password = ""
             print("You have been logged out...")
+            print("")
             time.sleep(1)
             login_or_signup()
 
@@ -294,6 +319,7 @@ def main_menu():
 def passwords_manager():
     global logged_in_password
     global logged_in_user
+    valid = False
 
     print("")
     print(f"You are currently signed as in: {logged_in_user}")
@@ -380,11 +406,12 @@ def save_password(password):
         write_password_json(data_json)
         time.sleep(1)
         print("")
-        print("Password has been saved! Returning you to main menu...")
+        print("Password has been saved! Returning you to password manager...")
         time.sleep(1)
-        main_menu()
+        passwords_manager()
     else:
-        print("There is already a password with this note! ")
+        print("")
+        print("There is already a password with this identifier!")
         save_password(password)
 
 
@@ -397,6 +424,7 @@ def view_passwords():
 
     if check_user_has_passwords():
         print("")
+        print("==============")
         print("Your Passwords")
         print("==============")
         data = get_password_json()
@@ -408,6 +436,10 @@ def view_passwords():
         for i in range(len(passwords)):
             print(f"{index + 1}) Identifier: {notes[index]}, Password: {decrypted_passwords[index]}")
             index += 1
+        print("")
+        print("Sending you back to password manager...")
+        time.sleep(3)
+        passwords_manager()
     else:
         print("")
         print("You do not have any passwords saved yet! Sending you to main menu...")
@@ -425,8 +457,19 @@ def add_password():
 def del_password():
     data = get_password_json()
     valid = False
+    passwords = []
+    notes = []
+    decrypted_passwords = []
+    index = 0
 
-    view_passwords()
+    for item in data[logged_in_user]:
+        notes += item.keys()
+        passwords += item.values()
+    for encrypted in passwords:
+        decrypted_passwords.append(decrypt(encrypted))
+    for i in range(len(passwords)):
+        print(f"{index + 1}) Identifier: {notes[index]}, Password: {decrypted_passwords[index]}")
+        index += 1
 
     print("")
     note = str(input("Enter the identifier of the password you want to delete: "))
@@ -436,7 +479,7 @@ def del_password():
         print("The identifier you entered does not exist! Would you like to:")
         print("")
         print("1. Try again")
-        print("2. Back to Main Menu")
+        print("2. Back to Password Manager")
         print("")
 
         while not valid:
@@ -452,12 +495,9 @@ def del_password():
             case 1:
                 del_password()
             case 2:
-                main_menu()
+                passwords_manager()
     else:
-        for item in data[logged_in_user]:
-            if note in item:
-                del item
-                break
+        data[logged_in_user] = [entry for entry in data[logged_in_user] if note not in entry]
 
         write_password_json(data)
 
@@ -465,7 +505,7 @@ def del_password():
         print("Password deleted successfully! Would you like to:")
         print("")
         print("1. Delete another password")
-        print("2. Back to Main Menu")
+        print("2. Back to Password Manager")
         print("")
 
         while not valid:
@@ -481,7 +521,7 @@ def del_password():
             case 1:
                 del_password()
             case 2:
-                main_menu()
+                passwords_manager()
 
 
 def encrypt(plaintext):
